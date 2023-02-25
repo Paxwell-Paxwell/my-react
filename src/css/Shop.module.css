@@ -1,0 +1,15 @@
+.num_card{
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background-color: #e26464;
+    position: absolute;
+    right: -5px ;
+    top: 3px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

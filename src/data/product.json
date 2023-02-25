@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "name": "PS4", 
+        "price": 299.99,
+        "description": "Playstation 4",
+        "category": "Video Games"
+    },
+    {
+        "id": 2,
+        "name": "PS5", 
+        "price": 499.99,
+        "description": "Playstation 5",
+        "category": "Video Games"
+    },
+    {
+        "id": 3,
+        "name": "Chair", 
+        "price": 99.99,
+        "description": "Gaming Chair",
+        "category": "Furniture"
+    },
+    {
+        "id": 4,
+        "name": "Iphone 12", 
+        "price": 999.99,
+        "description": "Iphone 12",
+        "category": "Cell Phones"
+    },
+    {
+        "id": 5,
+        "name": "Samsung Galaxy S21", 
+        "price": 799.99,
+        "description":  "Samsung Galaxy S21",
+        "category": "Cell Phones"
+    }
+]
