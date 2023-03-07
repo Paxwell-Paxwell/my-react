@@ -11,6 +11,7 @@ import Shop from './page/Shop';
 import Navbar from "./component/Navbar";
 import reportWebVitals from './test/reportWebVitals';
 import Review from './page/Review';
+import Cart from './page/Cart';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -23,6 +24,7 @@ root.render(
         <Route path="/convert-unit" element={<ConvertUnit />} />
         <Route path="/preview" element={<Review />} />
         <Route path="/shop" element={<Shop />} />
+        <Route path="/shop/cart" element={<Cart />}/>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

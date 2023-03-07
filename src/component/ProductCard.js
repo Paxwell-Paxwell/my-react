@@ -1,6 +1,19 @@
 import React from 'react'
+import Sty from '../css/ProductCard.module.css'
+
 
 export default function ProductCard({items,onAdd}) {
+  const [count, setCount] = React.useState(1);
+  const add = (op) => {
+    if(op === "+") {
+        setCount(count + 1);
+    }
+    else {
+        if(count > 0) {
+            setCount(count - 1);
+        }
+    }
+  }
   return (
     <>
         <div className="card h-100">
@@ -13,7 +26,12 @@ export default function ProductCard({items,onAdd}) {
                         <h6>Rating: {items?.rating?.count}</h6>
                     </div>
                     <div className="text-center">
-                        <button type="button" className="btn btn-primary" onClick={onAdd}>Add to cart</button>
+                        <div style={{display:"inline" }} className={Sty.add}>
+                            <button onClick={()=>add('-')}>-</button>
+                            <span style={{width:"20px",display:"inline-block"}}>{count}</span>
+                            <button onClick={()=>add('+')}>+</button>
+                        </div>
+                        <button type="button" className="btn btn-primary ms-3" onClick={() => {onAdd(items?.id,count)}}>Add to cart</button>
                     </div>
                 </div>
 

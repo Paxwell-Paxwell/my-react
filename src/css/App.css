@@ -36,3 +36,27 @@
     transform: rotate(360deg);
   }
 }
+/* From https://css.glass */
+.glass{
+    background: rgba(255, 255, 255, 0.58);
+  border-radius: 16px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.27);
+  animation: shadow 2s infinite alternate;
+  /* animation: shadow 1s infinite alternate; */
+}
+
+.bg{
+    background: url("https://wallpaperaccess.com/full/3287324.jpg");
+    background-repeat: no-repeat;
+}
+@keyframes shadow {
+  from {
+    box-shadow: 0 8px 20px rgba(12, 228, 203, 0.9), 0 -8px 20px rgba(92, 222, 26, 0.9);
+  }
+  to {
+    box-shadow: 0 -8px 20px rgba(12, 228, 203, 0.9), 0 8px 20px rgba(92, 222, 26, 0.9);
+  }
+}
+  

@@ -40,6 +40,12 @@ export default function Navbar() {
                                 Preview
                             </Link>
                         </li>
+                        <li>
+                            <Link to="/shop" className="nav-link">
+                                Shop
+                            </Link>
+
+                            </li>
                     </ul>
                 </div>
             </div>

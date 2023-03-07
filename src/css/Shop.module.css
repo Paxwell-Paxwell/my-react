@@ -13,3 +13,40 @@
     justify-content: center;
     align-items: center;
 }
+.popupcard{
+    position: absolute;
+    right: 0px ;
+    top: 10px;
+}
+
+.search_bg {
+    background: linear-gradient(180deg, #2d2db0 -65%, #2c8cf4 110%);
+}
+
+.search_icon {
+    position: absolute;
+    right: 25px;
+    top: 5px;
+    color: #000;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"] + label {
+    margin-right: 10px;
+    padding: 0.5rem;
+    border: 2px solid #fff;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked + label {
+    background-color: yellow;
+    border-color: yellow;
+    color: #000;
+}

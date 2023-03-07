@@ -4,16 +4,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
     return (
-        <div className="container-fluid">
-            <div className="row">
-                <div className="col-12">
-                    <h1>Hello World</h1>
-                    <br />
-                    <input type="text" placeholder="Enter your name" />
-                    <br />
-                    <button className="btn btn-primary" type="submit">
-                        Submit
-                    </button>
+        <div className="container-fluid bg" >
+            <div className="row  align-items-center" style={{height:"95vh"}}>
+                <div className="offset-4 col-4 text-center glass "  >
+                    <span style={{fontSize:"6rem"}}>Hello World</span>
                 </div>
             </div>
         </div>

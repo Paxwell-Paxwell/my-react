@@ -1,0 +1,16 @@
+.popup_cart::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: 8px;
+    width: 10px;
+    height: 10px;
+    background-color: #f8f8f8;
+    transform: rotate(45deg);
+    border-top: 1px solid #d2d2d2;
+    border-left: 1px solid #d2d2d2;
+    /* border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
+    border-bottom: 8px solid #f8f8f8; */
+
+}
