@@ -1,12 +1,13 @@
 import React from "react";
-import axios from "axios";
 import ProductCard from "../component/ProductCard";
 import Loader from "../component/Loader";
 
 import Sty from "../css/Shop.module.css";
-import { json ,Link} from "react-router-dom";
+import { Link} from "react-router-dom";
 import Popupcart from "../component/Popupcart";
 import getAllProduct  from "../service/product";
+import { useSelector, useDispatch } from "react-redux";
+import { addCart } from "../store/cartSlice";
 
 const initcatagory = [
     {name: "men's clothing", checked: false, id: 0},
@@ -15,13 +16,18 @@ const initcatagory = [
     {name: "women's clothing", checked: false, id: 3}
 ];
 export default function Shop() {
+    const cou = useSelector((state) => state.cart.countCart);
+    const dispatch = useDispatch();
     const [AllProduct, setAllProduct] = React.useState([]);
     const [productList, setProductList] = React.useState([]);
-    const [cou, setCou] = React.useState(0);
+    //const [cou, setCou] = React.useState(0);
     const [search, setSearch] = React.useState("");
     const [catagory, setCatagory] = React.useState(initcatagory);
     const [loading, setLoading] = React.useState(false);
     const [holdicon, setHoldIcon] = React.useState(false);
+    const [searchHistory, setSearchHistory] = React.useState([]);
+    const [showHistory, setShowHistory] = React.useState(false);
+    const [mouseOverHistory, setMouseOverHistory] = React.useState(false);
 
     // similar to componentDidMount and componentDidUpdate:
     // get data from api
@@ -34,43 +40,18 @@ export default function Shop() {
             }
         ) 
     }, []); // [] means only run once
-
-    // get countCart from localStorage
     React.useEffect(() => {
-        setCou(localStorage.getItem("countCart")? Number(localStorage.getItem("countCart")):0);
-    }, [])
+        const localHistory = localStorage.getItem("search-history");
+        if (localHistory !== null) {
+            setSearchHistory(JSON.parse(localHistory));
+        }
+    }, []);
+   
     function showLoading() {
         setLoading(true);
         setTimeout(() => {
             setLoading(false);
         }, 500);
-    }
-
-    function addToCart(id,qty) {
-        console.log(id);
-        const new_item ={
-            id: id,
-            qty: qty
-        }
-        const localItem  = localStorage.getItem("items");
-        if(localItem !== null) {
-            
-            let items = JSON.parse(localItem);
-            const foundIndex = items.findIndex((item) => item.id === id);
-            if(foundIndex > -1) {
-                items[foundIndex].qty += qty;
-                localStorage.setItem("items", JSON.stringify(items));
-            }
-            else {
-                items.push(new_item);
-                localStorage.setItem("items", JSON.stringify(items));
-            }
-        }
-        else {
-            localStorage.setItem("items", JSON.stringify([new_item]));
-        }
-        localStorage.setItem("countCart", JSON.parse(localStorage.getItem("items")).length);
-        setCou(localStorage.getItem("countCart")? Number(localStorage.getItem("countCart")):0);
     }
     function seachProduct(event) {
         showLoading();
@@ -86,6 +67,25 @@ export default function Shop() {
             else {
                 setProductList(searchList);
             }
+
+            // save search history
+            const localHistory = localStorage.getItem("search-history");
+            if (localHistory === null) {
+                localStorage.setItem("search-history", JSON.stringify([search]));
+            }
+            else {
+                let tmp = JSON.parse(localHistory);
+                if(tmp.indexOf(search) === -1) {
+                    if(tmp.length < 10) {
+                        tmp.unshift(search);
+                    }
+                    else {
+                        tmp.unshift(search);
+                        tmp.pop();
+                    }
+                    localStorage.setItem("search-history", JSON.stringify(tmp));
+                }
+            }
         }
         else {
             if(catagory.find((item) => item.checked === true)){
@@ -95,9 +95,9 @@ export default function Shop() {
                 setProductList(AllProduct);;
             }
         }
-    }
 
-     function  filterCategory(event){
+    }
+    function filterCategory(event){
         // console.log(event.target.value, event.target.checked);
         showLoading();
         const tmp = [...catagory];
@@ -146,7 +146,7 @@ export default function Shop() {
                                 <i style={{fontSize: "2rem",cursor:"pointer"}} onMouseEnter={()=>setHoldIcon(true)} onMouseLeave={()=>setHoldIcon(false)} className="bi bi-cart-plus"></i>
                             </Link>
                             <div  className="z-1" style={{width:"18rem",position:"absolute",top:"50px",right:"0px"}} > 
-                                {holdicon && <Popupcart allproduct={AllProduct}/>}
+                                {holdicon && <Popupcart allproduct={AllProduct} proInCart ={cou}/>}
                             </div>
                             
                             
@@ -161,10 +161,33 @@ export default function Shop() {
                         <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Velit, perferendis.</p>
                         <div className="row">
                             <div className="offset-3 col-6 position-relative">
-                                <form action="#search" onSubmit={(event) => {seachProduct(event)}}>
+                                <form className={`${Sty.search_form}`} action="#search" onSubmit={(event) => {seachProduct(event)}}>
                                     <i className={`${Sty.search_icon} bi bi-search`} onClick={seachProduct}></i>
-                                    <input value={search} type="text" className="form-control" onChange={(e)=>(setSearch(e.target.value))}/>
-
+                                    <input value={search} type="text" className="form-control" onFocus={()=>setShowHistory(true)} 
+                                    onBlur={()=>{
+                                        if (!mouseOverHistory) {
+                                            setShowHistory(false);
+                                          }
+                                    }} 
+                                         onChange={(e)=>(setSearch(e.target.value))}/>
+                                    <div className={`${Sty.search_history}`} 
+                                     onMouseEnter={() => setMouseOverHistory(true)}
+                                     onMouseLeave={() => {
+                                       setMouseOverHistory(false);
+                                       
+                                     }}
+                                     >
+                                        {showHistory && searchHistory.map((item, index) => {
+                                            return  (
+                                                <div className={`${Sty.child_history}`} key={index} onClick={()=>{
+                                                    setSearch(item);
+                                                    setShowHistory(false);
+                                                } }>
+                                                    {item}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
                                 </form>
                                 <div className="row">
 
@@ -203,7 +226,7 @@ export default function Shop() {
                         {!loading &&productList.map((item) => 
                             (
                                 <div key={item.id} className="col-3 mb-3">
-                                    <ProductCard items={item} onAdd={(id,qty)=>{addToCart(id,qty)}}/>
+                                    <ProductCard items={item} onAdd={(id,qty)=>{dispatch(addCart({id,qty}))}}/>
                                 </div>
                             )
                         )} 

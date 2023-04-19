@@ -4,65 +4,39 @@ import CardCart from '../component/CardCart'
 import ProductCard from '../component/ProductCard'
 import Popupcart from '../component/Popupcart'
 import getAllProduct from '../service/product'
+import { useSelector, useDispatch } from 'react-redux'
+import {  changeQty,removeCart} from '../store/cartSlice'
+
 export default function Cart() {
-  const [AllProduct, setAllProduct] = React.useState([]);
-  const [productList, setProductList] = React.useState([]);
-  
+    const [AllProduct, setAllProduct] = React.useState([]);
+    const [productList, setProductList] = React.useState([]);
+    const cartdata = useSelector((state) => state.cart.items);
+    const dispatch = useDispatch();
+
   React.useEffect(() => {
-      getAllProduct().then((data) => {
-          setAllProduct(data);
-          let localItem = localStorage.getItem("items")
-          if(localItem !== null) {
-              localItem = JSON.parse(localItem);
-              let newItem = data.map((product) => {
+    getAllProduct().then((data) => {
+        setAllProduct(data);
+        let localItem = cartdata; // []
+        if(localItem.length > 0) {
+            let newItem = data.map((product) => {
                 const foundIndex = localItem.findIndex((cart) => cart.id === product.id)
                 if(foundIndex > -1) {
                     product.qty = localItem[foundIndex].qty;
                     return product;
                 }
-              });
+                return undefined;
+            });
 
-              newItem = newItem.filter((item) => item !== undefined);
-              setProductList(newItem);
-          }
-      })
+            newItem = newItem.filter((item) => item !== undefined);
+            setProductList(newItem);
+        }
+        else {
+            setProductList([]);
+        }
+    })
         
-  },[]);
-  function delCard(id) {
-      const foundIndex = productList?.findIndex((item) => item.id === id);
-      if(foundIndex > -1) {
-          let newproductList = [...productList];
-          newproductList.splice(foundIndex,1);
-          setProductList(newproductList);
-          let localItem = localStorage.getItem("items");
-          if(localItem !== null) {
-              localItem = JSON.parse(localItem);
-              localItem.splice(foundIndex,1);
-              localStorage.setItem("items", JSON.stringify(localItem));
-          }
-          localItem = localStorage.getItem("countCart");
-          if(localItem !== null) {
-              localItem = Number(localItem);
-              localItem -= 1;
-              localStorage.setItem("countCart", localItem);
-          }
+  },[cartdata]);
 
-      }
-  }
-  function changeQty(id,qty) {
-      const foundIndex = productList.findIndex((item) => item.id === id);
-      if(foundIndex > -1) {
-          let newproductList = [...productList];
-          newproductList[foundIndex].qty = qty;
-          setProductList(newproductList);
-          let localItem = localStorage.getItem("items");
-          if(localItem !== null) {
-              localItem = JSON.parse(localItem);
-              localItem[foundIndex].qty = qty;
-              localStorage.setItem("items", JSON.stringify(localItem));
-          }
-      }
-    }
 
   return (
     <>
@@ -75,8 +49,13 @@ export default function Cart() {
       </div>
       <div className="container">
           {productList?.map((item) => {
-              return <CardCart key={item.id} product={item} onChangeqty={(id,qty)=>changeQty(id,qty)} onDelete={(id)=>delCard(id)}/>
+              return <CardCart key={item.id} product={item} onChangeqty={(id,qty)=>dispatch(changeQty({id,qty})) } onDelete={(id)=>dispatch(removeCart(id))}/>
           })}
+          {productList.length === 0 && 
+            <div style={{display:"flex",justifyContent:"center",alignItems:"center",height:"75vh"}}>
+              <h1 className="text-center">Cart is empty</h1>
+            </div>}
+          
           
       </div>
     </>

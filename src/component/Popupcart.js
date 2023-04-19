@@ -1,7 +1,7 @@
 import React from "react";
 import Sty from "../css/PopupCart.module.css";
 
-export default function Popupcart({allproduct}) {
+export default function Popupcart({allproduct,proInCart}) {
   
   const [filterProduct, setFilterProduct] = React.useState([]);
 
@@ -26,7 +26,9 @@ export default function Popupcart({allproduct}) {
         className={`card ${Sty.popup_cart}` }
         style={{ width: "18rem", borderRadius: "0px 0px 5px 5px" }}
       >
-        <div className="card-header text-start">Product</div>
+        {proInCart===0 && <div className="card-header text-start"> No products in cart </div> }
+        { proInCart>0 &&
+        <div className="card-header text-start">Product</div>}
         <ul className="list-group list-group-flush">
           {filterProduct?.map((item) => (
             <li key={item.id} className="list-group-item">

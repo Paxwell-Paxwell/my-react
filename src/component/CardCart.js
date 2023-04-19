@@ -4,7 +4,7 @@ export default function CardCart({ product ,onChangeqty,onDelete }) {
     const [qty,setQty] = React.useState(1);
     React.useEffect(() => {
         setQty(product.qty);
-    },[]);
+    },[product]);
 
     const { id,title,price} = product;
     function chageQty(type) {
@@ -14,7 +14,7 @@ export default function CardCart({ product ,onChangeqty,onDelete }) {
             setQty(qty+1);
         }
         else {
-            if(qty > 1) {
+            if(qty >= 1) {
                 onChangeqty(id,qty-1);
                 setQty(qty-1);
             }
