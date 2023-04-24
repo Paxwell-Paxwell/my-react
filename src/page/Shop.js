@@ -3,7 +3,7 @@ import ProductCard from "../component/ProductCard";
 import Loader from "../component/Loader";
 
 import Sty from "../css/Shop.module.css";
-import { Link} from "react-router-dom";
+import { Link, useParams} from "react-router-dom";
 import Popupcart from "../component/Popupcart";
 import getAllProduct  from "../service/product";
 import { useSelector, useDispatch } from "react-redux";
@@ -26,12 +26,14 @@ export default function Shop() {
     const [loading, setLoading] = React.useState(false);
     const [holdicon, setHoldIcon] = React.useState(false);
     const [searchHistory, setSearchHistory] = React.useState([]);
+    const [searchMatch, setSearchMatch] = React.useState([]);
     const [showHistory, setShowHistory] = React.useState(false);
     const [mouseOverHistory, setMouseOverHistory] = React.useState(false);
 
     // similar to componentDidMount and componentDidUpdate:
     // get data from api
     React.useEffect(() => {
+       
         getAllProduct()
         .then((data) => {
                 console.log(data);    
@@ -44,6 +46,7 @@ export default function Shop() {
         const localHistory = localStorage.getItem("search-history");
         if (localHistory !== null) {
             setSearchHistory(JSON.parse(localHistory));
+            
         }
     }, []);
    
@@ -60,7 +63,7 @@ export default function Shop() {
             let searchList = AllProduct.filter((item) => {
                 return item.title.toLowerCase().includes(search.toLowerCase());
             });
-            console.log(searchList);
+            //console.log(searchList);
             if(catagory.find((item) => item.checked === true)){
                 showFilter(searchList)
             }
@@ -72,11 +75,12 @@ export default function Shop() {
             const localHistory = localStorage.getItem("search-history");
             if (localHistory === null) {
                 localStorage.setItem("search-history", JSON.stringify([search]));
+                setSearchHistory([search]);
             }
             else {
                 let tmp = JSON.parse(localHistory);
                 if(tmp.indexOf(search) === -1) {
-                    if(tmp.length < 10) {
+                    if(tmp.length < 20) {
                         tmp.unshift(search);
                     }
                     else {
@@ -84,6 +88,7 @@ export default function Shop() {
                         tmp.pop();
                     }
                     localStorage.setItem("search-history", JSON.stringify(tmp));
+                    setSearchHistory(tmp);
                 }
             }
         }
@@ -97,8 +102,27 @@ export default function Shop() {
         }
 
     }
+    function searchChange(searchTxt, showFlag) {
+        searchTxt = searchTxt.replace('<b>', '');
+        searchTxt = searchTxt.replace('</b>', '');
+        setSearch(searchTxt);
+        if(searchTxt !== '') {
+            setShowHistory(showFlag);
+            //let tmp = AllProduct.map(item => {return {...item}});
+            //let tmp = structuredClone(AllProduct)
+            let tmp = JSON.parse(JSON.stringify(AllProduct))
+            tmp = tmp.filter((item) => {
+                return item.title.toLowerCase().includes(searchTxt.toLowerCase());
+            });
+            tmp = tmp.map((item) => {
+                item.title = item.title.replace(searchTxt, `<b>${searchTxt}</b>`);
+                return item;
+            })
+            setSearchMatch(tmp);
+        }
+    }
     function filterCategory(event){
-        // console.log(event.target.value, event.target.checked);
+        // console.log(event.target.value, event.target.checked);  
         showLoading();
         const tmp = [...catagory];
         if(event.target.checked) {
@@ -169,7 +193,7 @@ export default function Shop() {
                                             setShowHistory(false);
                                           }
                                     }} 
-                                         onChange={(e)=>(setSearch(e.target.value))}/>
+                                        onChange={(e)=> searchChange(e.target.value, true)}/>
                                     <div className={`${Sty.search_history}`} 
                                      onMouseEnter={() => setMouseOverHistory(true)}
                                      onMouseLeave={() => {
@@ -177,20 +201,25 @@ export default function Shop() {
                                        
                                      }}
                                      >
-                                        {showHistory && searchHistory.map((item, index) => {
+                                        {showHistory && search === '' && searchHistory?.map((item, index) => {
                                             return  (
-                                                <div className={`${Sty.child_history}`} key={index} onClick={()=>{
-                                                    setSearch(item);
-                                                    setShowHistory(false);
-                                                } }>
+                                                <div className={`${Sty.child_history}`} key={index} onClick={()=>{searchChange(item, false)}}>
                                                     {item}
                                                 </div>
                                             )
                                         })}
+                                        {showHistory && search !== "" && searchMatch?.map((item, index) => {
+                                            return  (
+                                                    <div dangerouslySetInnerHTML={{__html: item.title}} className={`${Sty.child_history}`} key={index} onClick={()=>{searchChange(item.title, false)}}>
+                                                        
+                                                    </div>
+                                                )
+                                            }
+                                        )}
+
                                     </div>
                                 </form>
                                 <div className="row">
-
                                     <div className="col-12 m-2">
                                         {/* <button className="btn  btn-light me-2">men's clothing</button>
                                         <button className="btn  btn-light me-2">jewelery</button>
