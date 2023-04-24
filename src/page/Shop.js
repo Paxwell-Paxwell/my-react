@@ -3,7 +3,7 @@ import ProductCard from "../component/ProductCard";
 import Loader from "../component/Loader";
 
 import Sty from "../css/Shop.module.css";
-import { Link, useParams} from "react-router-dom";
+import { Link} from "react-router-dom";
 import Popupcart from "../component/Popupcart";
 import getAllProduct  from "../service/product";
 import { useSelector, useDispatch } from "react-redux";
