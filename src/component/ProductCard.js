@@ -12,6 +12,7 @@ export default function ProductCard({items,onAdd}) {
         if(count > 0) {
             setCount(count - 1);
         }
+        
     }
   }
   return (
